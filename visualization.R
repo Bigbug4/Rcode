@@ -50,10 +50,10 @@ expr_stage_series_var <- read.csv("expr_stage_series_var_a3.csv",row.names = 1)
 pheatmap::pheatmap(expr_stage_series_var[1:55, ],scale = "row",cluster_rows = FALSE,cluster_cols = FALSE,fontsize_row = 8, fontsize_col = 8)
 
 expr_stage_gene <- read.csv("expr_series_var_2.csv",row.names = 1)
-pheatmap::pheatmap(expr_stage_gene[1:55, ],cluster_rows = FALSE,cluster_cols = FALSE,color = colorRampPalette(c("red","white"))(50),scale = "none",fontsize_row = 8, fontsize_col = 8)
+pheatmap::pheatmap(expr_stage_gene[1:55, ],cluster_rows = FALSE,cluster_cols = FALSE,color = colorRampPalette(c("#2075FF","white"))(50),scale = "none",fontsize_row = 8, fontsize_col = 8)
 
 signal_gene <- read.csv("signal_gene.csv",row.names = 1)
-pheatmap::pheatmap(signal_gene[1:7, ],cluster_rows = FALSE,cluster_cols = FALSE,color = colorRampPalette(c("red","white"))(50),scale = "none",fontsize_row = 8, fontsize_col = 8)
+pheatmap::pheatmap(signal_gene[1:7, ],cluster_rows = FALSE,cluster_cols = FALSE,color = colorRampPalette(c("#2075FF","white"))(50),scale = "none",fontsize_row = 8, fontsize_col = 8)
 
 # bar
 sig_gene <- read.csv("sig_gene_v3.csv")
@@ -114,15 +114,15 @@ df3 <- add_row(df3,24)
 
 df <- cbind(df1,df2,df3)
 
-p1 <- ggplot(data = df) + geom_line(aes(x1,y1,colour = "#0F0"),size = 0.5) +
+p1 <- ggplot(data = df) + geom_line(aes(x1,y1,colour = "#0F0"),size = 0.5,linetype=1) +
   labs(title = "ROC curve") + 
   xlab("1 - Specificity") + 
   ylab("Sensitivity") + 
   theme(plot.title = element_text(size = 15)) +
   geom_segment(aes(x = 0, xend = 1, y = 0, yend = 1), size = 0.5, color="grey", linetype="dashed") + theme_minimal()
 
-p2 <- geom_line(aes(x2,y2,colour = "#F00"),size = 0.5) 
-p3 <- geom_line(aes(x3,y3,colour = "#00F"),size = 0.5) 
+p2 <- geom_line(aes(x2,y2,colour = "#F00"),size = 0.5,linetype=1) 
+p3 <- geom_line(aes(x3,y3,colour = "#00F"),size = 0.5,linetype=1) 
 
 p1+p2+p3
 save.image("visualization.RData")

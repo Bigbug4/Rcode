@@ -2,7 +2,8 @@
 DIR=getwd()
 setwd("E:\\Rcode\\data")
 
-data<-read.csv("expr_all_log.csv")
+# data<-read.csv("expr_all_log.csv")
+data<-read.csv("expr_all_zscore.csv",row.names = 1)
 
 library(ROSE)
 

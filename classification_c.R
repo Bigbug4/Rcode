@@ -7,7 +7,7 @@ expr_data_cpm <- read.csv("CPM.csv",row.names = 1)
 names(expr_data_cpm) <- gsub("\\.","-",names(expr_data_cpm))
 sample_list <- read.csv("sample_list.csv")
 sample_list <- as.vector(t(sample_list))
-expr_data_choosed_cpm <- expr_data_cpm[,which(names(expr_data_choosed_cpm)%in%sample_list)]
+expr_data_choosed_cpm <- expr_data_cpm[,which(names(expr_data_cpm)%in%sample_list)]
 write.csv(expr_data_choosed_cpm,file = "expr_gene_data_cpm.csv")
 
 sample_choosed <- read.csv("sample_choosed.csv")
@@ -16,7 +16,6 @@ case_choosed <- names(case_choosed)[which(case_choosed==2)]
 s <- sample_choosed[which(sample_choosed$Case.ID%in%case_choosed),]
 s <- s[order(s$Case.ID),]
 sample_choosed_20 <- s[1:20,]
-
 
 sig_gene <- read.csv("sig_gene_v3.csv")
 sig_gene <- sig_gene[order(sig_gene$logFC,decreasing = TRUE),]
@@ -63,7 +62,7 @@ sample_all_test <- read.csv("Sample_all_test.csv",header = T)
 
 s3 <- comp_in_ssample(log10(expr_data_cpm[1:41,]),log10(expr_data_cpm[42:55,]))
 s3 <- s3[order(s3)]
-s3 <- s3[which(names(s3)%in%sample_all_test)]
+s3 <- s3[which(names(s3)%in%sample_all_test$x)]
 write.csv(s3,"test_cpm_result.csv")
 Positive <- s3[which(grepl("-01",names(s3)))]
 Negative <- s3[which(grepl("-11",names(s3)))]

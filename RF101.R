@@ -3,19 +3,20 @@ DIR=getwd()
 setwd("E:\\Rcode\\data")
 
 #randomForest
-trainset <- read.csv("expr_gene_choosed.csv",row.names = 1)
-testset <- read.csv("expr_gene_all.csv",row.names = 1)
+trainset <- read.csv("expr_gene_choosed101.csv",row.names = 1)
+testset <- read.csv("expr_gene_all101.csv",row.names = 1)
 
-trainset_zscore <- scale(trainset[,-56])
+trainset_zscore <- scale(trainset[,-102])
 trainset_zscore <- as.data.frame(trainset_zscore)
 trainset_zscore$class <- trainset$class
 
-testset_zscore <- scale(testset[,-56])
+testset_zscore <- scale(testset[,-102])
 testset_zscore <- as.data.frame(testset_zscore)
 testset_zscore$class <- testset$class
 
 trainset <- trainset_zscore 
 testset <- testset_zscore
+
 library(randomForest)
 
 set.seed(1245)
@@ -34,7 +35,7 @@ y[which(grepl("no",y))] <- 0
 y <- as.numeric(y)
 df2 <- data.frame(y,rf.pred.p[,2])
 names(df2) <- c("y","pred") 
-write.csv(df2,file ="rftest.csv",row.names = FALSE)
+write.csv(df2,file ="rftest101.csv",row.names = FALSE)
 
 res <- as.numeric(tab)
 acc <- (res[1] + res[4])/sum(res)
@@ -50,7 +51,7 @@ SPC <- res[1]/(res[1] + res[2])
 # boxplot(margins.rf ~ trainset$class,main = "Margines of Random Forest for stomach dataset by class")
 
 #ROC
-rftest <- read.csv("rftest.csv")
+rftest <- read.csv("rftest101.csv")
 
 rftest_rf.pred <- as.numeric(rftest$pred)
 rftest_y <- as.numeric(rftest$y)
@@ -68,4 +69,4 @@ plot(perf,
 
 abline(0,1)
 
-save.image("RF.Rdata")
+save.image("RF101.Rdata")

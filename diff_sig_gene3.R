@@ -147,10 +147,19 @@ sig_gene_top40 <- rbind(sig_gene_top20,sig_gene_tail20)
 #sig_gene_top40 <- cbind(sig_gene_top40,xx)
 #write.csv(sig_gene_top40,file = "sig_gene_top40_v2.csv")
 
+score_result <- read.csv("sig_gene_mrna_v3.csv")
+row.names(score_result) <- score_result$GeneName
+write.csv(score_result[1:55,],file = "sig_gene_mrna_55.csv",row.names = FALSE)
+write.csv(score_result[1:101,],file = "sig_gene_mrna_101.csv",row.names = FALSE)
+
+sig_gene_101 <- score_result[1:101,]
+xx <- read.csv("diff_expr_protein.csv")
+row.names(xx) <- xx$gene_name
+yy <- xx[row.names(sig_gene_101),]
+sig_gene_101 <- cbind(sig_gene_101,yy[, c(2,5,9,10,11)])
+write.csv(sig_gene_101,file = "sig_gene_101.csv",row.names = FALSE)
 
 sig_gene_v3 <- score_result_order[score_result_order$score>1.2,]
-xx <- diff_protein
-row.names(xx) <- xx$gene_name
-xx <- xx[row.names(sig_gene_v3),]
-sig_gene_v3 <- cbind(sig_gene_v3,xx)
-write.csv(sig_gene_v3,file = "sig_gene_v3.csv")
+zz <- xx[row.names(sig_gene_v3),]
+sig_gene_v3 <- cbind(sig_gene_v3,zz)
+write.csv(sig_gene_v3,file = "sig_gene_v3.csv",row.names = FALSE)

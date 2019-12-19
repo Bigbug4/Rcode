@@ -2,13 +2,13 @@
 DIR=getwd()
 setwd("E:\\Rcode\\data")
 
-# data_z <- read.csv("expr_gene_all_cpm.csv",row.names = 1)
-# data_zscore <- scale(data_z[,-56])
-# data_zscore <- as.data.frame(data_zscore)
-# data_zscore$class <- data_z$class
-# write.csv(data_zscore,"expr_all_zscore.csv")
+data_z <- read.csv("expr_gene_all101.csv",row.names = 1)
+data_zscore <- scale(data_z[,-102])
+data_zscore <- as.data.frame(data_zscore)
+data_zscore$class <- data_z$class
+write.csv(data_zscore,"expr_all_zscore101.csv")
 
-data<-read.csv("expr_all_zscore.csv",row.names = 1)
+data<-read.csv("expr_all_zscore101.csv",row.names = 1)
 # data<-read.csv("expr_all_log.csv")
 
 library(ROSE)
@@ -43,22 +43,22 @@ progress.bar$init(k)
 for(i in 1:k){
   # 删除i的行，创建训练集
   # 选i的行，创建验证集
-  trainingset <- subset(under, id %in% list[-i])[,-57]
-  testset <- subset(under, id %in% c(i))[,-57]
-
+  trainingset <- subset(under, id %in% list[-i])[,-103]
+  testset <- subset(under, id %in% c(i))[,-103]
+  
   #运行一个随机森林模???
   mymodel <- randomForest(trainingset$class ~ ., data = trainingset,importance = TRUE,norm.vote=TRUE)
   #去掉回应列class
-  rf.pred <- predict(mymodel, testset[,-56])
-  rf.pred.p = predict(mymodel,testset[,-56],type = 'prob')
-  tab <- table(rf.pred,testset[,56])
+  rf.pred <- predict(mymodel, testset[,-102])
+  rf.pred.p = predict(mymodel,testset[,-102],type = 'prob')
+  tab <- table(rf.pred,testset[,102])
   res <- as.numeric(tab)
   acc[i] <- (res[1] + res[4])/sum(res)
   spc[i] <- res[4]/(res[3] + res[4])
   tpr[i] <- res[1]/(res[1] + res[2])
   # 将迭代出的预测结果添加到预测数据框的末尾
   rftest_rf.pred <- rf.pred.p[,1]
-  rftest_y <- as.character(testset[,56])
+  rftest_y <- as.character(testset[,102])
   
   rftest_y[which(grepl("yes",rftest_y))] <- 1
   rftest_y[which(grepl("no",rftest_y))] <- 0
@@ -66,7 +66,7 @@ for(i in 1:k){
   temp <- as.data.frame(rf.pred.p[,1])
   prediction <- rbind(prediction, temp)
   testsetCopy <- rbind(testsetCopy, as.data.frame(rftest_y))
-
+  
   # rf_pred <- cbind(rf_pred, temp)
   # rf_y <- cbind(rf_y,as.data.frame(rftest_y))
   

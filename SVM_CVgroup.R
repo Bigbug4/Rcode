@@ -2,12 +2,13 @@
 DIR=getwd()
 setwd("E:\\Rcode\\data")
 
-data<-read.csv("expr_all_log.csv")
+# data<-read.csv("expr_all_log.csv")
+data<-read.csv("expr_all_zscore.csv",row.names = 1)
 
 library(ROSE)
 
 data$class <- as.factor(data$class)
-under <- ovun.sample(class ~ ., data, method = "under", N=50,seed = 3)$data
+under <- ovun.sample(class ~ ., data, method = "under", N=50,seed = 11)$data
 table(under$class)
 
 library(data.table)
@@ -79,6 +80,7 @@ pred <- prediction(Predicted, Actual)
 perf <- performance(pred,"tpr","fpr")
 auc <- performance(pred,'auc')
 auc = unlist(slot(auc,"y.values"))
+
 
 plot(perf,
      xlim=c(0,1), ylim=c(0,1),col='red', 

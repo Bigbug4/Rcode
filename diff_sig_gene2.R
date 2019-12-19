@@ -14,15 +14,21 @@ names(sample_choosed) <- "Sample.ID"
 
 expr_data_choosed <- sum_expr_data[-c(1:5),which(names(sum_expr_data)%in%sample_choosed$Sample.ID)]
 counts <- as.matrix(expr_data_choosed)
+# counts_t <- t(counts)
+# write.table(counts_t,"counts_t.txt",sep = "\t")
+write.csv(counts,"counts.csv")
+
 dge <- DGEList(counts = counts)
 dge <- calcNormFactors(dge)
 CPM <- cpm(dge, log=FALSE, prior.count=2)
-# ¹éÒ»»¯
+# ??Ò»??
 logCPM <- cpm(dge, log=TRUE, prior.count=3)
 group_list <- gsub("..*11A$",replacement = "Normal",names(expr_data_choosed))
 group_list <- gsub("..*01A$",replacement = "Tumor",group_list)
 group_list <- factor(group_list)
 design <- model.matrix(~0+group_list)
+write.csv(design,"design.csv")
+
 cont.matrix <- makeContrasts(group_listTumor-group_listNormal,levels = design)
 row.names(cont.matrix) <- levels(group_list)
 colnames(design) <- levels(group_list)
@@ -46,7 +52,7 @@ sum(result$logFC<=-1&result$adj.P.Val<0.01&result$AveExpr>=5)
 #result.up <- result[which(result$logFC>=1&result$adj.P.Val<0.01&result$AveExpr>=5),]
 #result.down <- result[which(result$logFC<=-1&result$adj.P.Val<0.01&result$AveExpr>=5),]
 
-# ×¢ÊÍ
+# ×¢??
 expr_data_annotation <- read.csv("ensembel_gene_all.csv")
 expr_data_choosed.annotation <- expr_data_annotation[expr_data_annotation$gene_id_v==row.names(expr_data_choosed),]
 
