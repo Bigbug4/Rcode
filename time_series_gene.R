@@ -1,5 +1,5 @@
 
-DIR=getwd()
+#DIR=getwd()
 
 setwd("E:\\Rcode\\data")
 
@@ -58,7 +58,7 @@ get_stage_matrix <- function(expr_data=expr_gene_top,stage_series=stage_series){
   stage_matrix <- data.frame(row.names = row.names(expr_data))
   for(stage in 1:length(stage_series)){
     case <- get(stage_series[stage])
-    sample <- all_sample_tumor_stomach$Sample.ID[which(all_sample_tumor_stomach$Case.ID%in%case)]
+    sample <- all_sample_tumor$Sample.ID[which(all_sample_tumor$Case.ID%in%case)]
     stage_matrix[,stage] <- rowMeans(expr_data[,which(names(expr_data)%in%sample)])
   }
   names(stage_matrix) <- stage_series
@@ -67,9 +67,9 @@ get_stage_matrix <- function(expr_data=expr_gene_top,stage_series=stage_series){
 
 
 expr_stage_series <- get_stage_matrix(expr_gene_top,stage_series)
-expr_stage_series_scale1 <- expr_stage_series/colSums(expr_stage_series)
-col_sum <- colSums(expr_stage_series)
-
+expr_stage_series_scale <- expr_stage_series
+#col_sum <- colSums(expr_stage_series)
+row_sum <- rowSums(expr_stage_series)
 
 stage_info <- rep(0,8)
 for(stage in 1:length(stage_series)){
@@ -84,7 +84,8 @@ write.csv(stage_info,file = "stage_info.csv")
 
 for(i in 1:55){
   for(j in 1:8){
-    expr_stage_series_scale1[i,j] <- expr_stage_series[i,j]/col_sum[j]
+    #expr_stage_series_scale[i,j] <- expr_stage_series[i,j]/col_sum[j]
+    expr_stage_series_scale[i,j] <- expr_stage_series[i,j]/row_sum[i]
     
   }
 }
@@ -200,4 +201,15 @@ for(i in 1:dim(expr_series_var_1)[1]){
 
 signal_gene <- expr_series_var_1[which(rowMeans(expr_series_var_1)<1),]
 write.csv(signal_gene,file = "signal_gene.csv")
+time_sig_gene <- sig_gene[which(sig_gene$gene_name%in%row.names(signal_gene)),]
 
+st1 <- 55 - colSums(expr_series_var_2)
+pt1 <- st1/55
+st2 <- 8 -colSums(signal_gene)
+pt2 <- st2/8
+
+df <- rbind(st1,pt1,st2,pt2)
+write.csv(df,"time_gene_results.csv")
+
+# save.image("time_sig_gene.RData")
+# load("time_sig_gene.RData")
