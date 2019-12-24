@@ -21,7 +21,7 @@ write.csv(counts,"counts.csv")
 dge <- DGEList(counts = counts)
 dge <- calcNormFactors(dge)
 CPM <- cpm(dge, log=FALSE, prior.count=2)
-# ??һ??
+# 归一化
 logCPM <- cpm(dge, log=TRUE, prior.count=3)
 group_list <- gsub("..*11A$",replacement = "Normal",names(expr_data_choosed))
 group_list <- gsub("..*01A$",replacement = "Tumor",group_list)
@@ -108,10 +108,10 @@ row.names(expr_mirna_choosed) <- expr_mirna$miRNA_ID
 expr_mirna <- expr_mirna_choosed
 rm(expr_mirna_choosed)
 
-
 mirna_counts <- as.matrix(expr_mirna)
 dge_mirna <- DGEList(counts = mirna_counts)
 dge_mirna <- calcNormFactors(dge_mirna)
+CPM_mirna <- cpm(dge_mirna, log=FALSE, prior.count=2)
 logCPM_mirna <- cpm(dge_mirna, log=TRUE, prior.count=3)
 
 group_list <- gsub("..*11A$",replacement = "Normal",names(expr_mirna))
@@ -146,5 +146,8 @@ expr_diff_mirna <- expr_mirna[which(row.names(expr_mirna)%in%row.names(diff_mirn
 
 write.csv(result.mirna,file = "result.mirna.csv")
 write.csv(diff_mirna,file = "diff_expr_mirna.csv")
-write.table(row.names(diff_mirna),file = "diff_gene_mirna.txt",row.names = FALSE,col.names = FALSE,quote = FALSE)
+# write.table(row.names(diff_mirna),file = "diff_gene_mirna.txt",row.names = FALSE,col.names = FALSE,quote = FALSE)
 write.csv(expr_diff_mirna,file = "expr_diff_mirna.csv")
+
+# save.image("limma_result.Rdata")
+# load("limma_result.Rdata")

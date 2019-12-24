@@ -10,10 +10,10 @@ expr_diff_protein.annotation <- gene_id2name(result = expr_diff_protein)
 expr_diff_protein <- cbind(expr_diff_protein,expr_diff_protein.annotation$gene_name)
 row.names(expr_diff_protein) <- expr_diff_protein$`expr_diff_protein.annotation$gene_name`
 expr_diff_protein <- expr_diff_protein[,sample_list]
+write.csv(expr_diff_protein,"expr_diff_protein.csv")
 
-
-expr_diff_lincrna <- expr_data_choosed[result.lincrna$gene_id_v,]
-expr_diff_lincrna <- expr_diff_lincrna[,sample_list]
+# expr_diff_lincrna <- expr_data_choosed[result.lincrna$gene_id_v,]
+# expr_diff_lincrna <- expr_diff_lincrna[,sample_list]
 
 expr_diff_lncrna <- expr_data_choosed[result.lncrna$gene_id_v,]
 expr_diff_lncrna <- expr_diff_lncrna[,sample_list]
@@ -51,11 +51,11 @@ correlation_matrix <- function(expr_data1,expr_data2,pvalue = 0.05){
 }
 
 
-correlation_matrixofgene <- correlation_matrix(expr_data = expr_diff_up_protein)
-cor_mat_mirna <- correlation_matrix(expr_diff_mirna)
+# correlation_matrixofgene <- correlation_matrix(expr_data = expr_diff_up_protein)
+# cor_mat_mirna <- correlation_matrix(expr_diff_mirna)
 
 cor_mat_mirna_protein <- correlation_matrix(expr_diff_mirna,expr_diff_protein)
-cor_mat_lincrna_protein <- correlation_matrix(expr_diff_lincrna,expr_diff_protein)
+# cor_mat_lincrna_protein <- correlation_matrix(expr_diff_lincrna,expr_diff_protein)
 cor_mat_lncrna_protein <- correlation_matrix(expr_diff_lncrna,expr_diff_protein)
 
 
@@ -125,14 +125,15 @@ score_result <- score_list_rna/max(abs(score_list_rna))+score_list_PPI/max(abs(s
 
 score_result_order <- score_result[order(score_result,decreasing = TRUE)]
 
-x <- mutated_genes$Gene
-y <- CNA_genes$Gene
-var_gene <- score_result[union(x,y)]
-var_gene <- var_gene[order(var_gene,decreasing = TRUE)]
+# x <- mutated_genes$Gene
+# y <- CNA_genes$Gene
+# var_gene <- score_result[union(x,y)]
+# var_gene <- var_gene[order(var_gene,decreasing = TRUE)]
 
 score_result_order <- data.frame(score = score_result_order,row.names = names(score_result_order))
-score_result_order$variation <- ifelse(row.names(score_result_order)%in%names(var_gene),1,0)
+# score_result_order$variation <- ifelse(row.names(score_result_order)%in%names(var_gene),1,0)
 sig_gene <- score_result_order
+plot(sig_gene$score,type = "l")
 
 write.csv(score_list_rna,file = "key_gene_score.csv")
 write.csv(sig_gene,file = "sig_gene_mrna_v3.csv")
@@ -163,3 +164,6 @@ sig_gene_v3 <- score_result_order[score_result_order$score>1.2,]
 zz <- xx[row.names(sig_gene_v3),]
 sig_gene_v3 <- cbind(sig_gene_v3,zz)
 write.csv(sig_gene_v3,file = "sig_gene_v3.csv",row.names = FALSE)
+
+#save.image("cor_matrix.Rdata")
+# load("cor_matrix.Rdata")
