@@ -92,6 +92,7 @@ sig_gene_kegg_term$geneName <- entrezid2name(sig_gene_kegg_term$geneID,sig_gene_
 
 write.csv(x = enrichGO.sig_gene@result,file = "sig_gene_go.csv")
 write.csv(x = enrichKEGG.sig_gene@result,file = "sig_gene_kegg.csv")
+write.csv(sig_gene_kegg_term,file = "sig_gene_kegg_term.csv")
 
 library(pathview)
 

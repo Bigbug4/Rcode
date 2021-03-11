@@ -21,18 +21,32 @@ write.csv(counts,"counts.csv")
 dge <- DGEList(counts = counts)
 dge <- calcNormFactors(dge)
 CPM <- cpm(dge, log=FALSE, prior.count=2)
+
 # 归一化
 logCPM <- cpm(dge, log=TRUE, prior.count=3)
+# write.csv(logCPM,"logCPM40.csv")
+
 group_list <- gsub("..*11A$",replacement = "Normal",names(expr_data_choosed))
 group_list <- gsub("..*01A$",replacement = "Tumor",group_list)
 group_list <- factor(group_list)
 design <- model.matrix(~0+group_list)
-write.csv(design,"design.csv")
+
+v <- voom(counts,design,normalize="quantile")
+hist(counts)
+hist(CPM)
+hist(logCPM)
+hist(v$E)
+boxplot(counts, col=rainbow(20),main="expression value",las=2)
+boxplot(logCPM,col=rainbow(20),main="expression value",las=2)
+boxplot(CPM,col=rainbow(20),main="expression value",las=2)
+boxplot(v$E,col=rainbow(20),main="expression value",las=2)
+# fit <- lmFit(v,design)
 
 cont.matrix <- makeContrasts(group_listTumor-group_listNormal,levels = design)
 row.names(cont.matrix) <- levels(group_list)
 colnames(design) <- levels(group_list)
 rownames(design) <- colnames(counts)
+write.csv(design,"design.csv")
 fit <- lmFit(logCPM, design)
 
 ##
@@ -150,4 +164,4 @@ write.csv(diff_mirna,file = "diff_expr_mirna.csv")
 write.csv(expr_diff_mirna,file = "expr_diff_mirna.csv")
 
 # save.image("limma_result.Rdata")
-# load("limma_result.Rdata")
+load("limma_result.Rdata")

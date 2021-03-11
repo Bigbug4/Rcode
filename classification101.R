@@ -69,7 +69,7 @@ combine_sample <- function(expr_data_choosed,sample_choosed,n){
   combine_matrix <- expr_data_choosed[,1:n]
   names(combine_matrix) <- unique(sample_choosed$Case.ID)
   for (i in 1:n) {
-    a <- as.numeric(expr_data_choosed[,as.character(sample_choosed$Sample.ID[i])])
+    a <- as.numeric(expr_data_choosed[,as.character(sample_choosed$Sample.ID[2*i-1])])
     b <- as.numeric(expr_data_choosed[,as.character(sample_choosed$Sample.ID[2*i])])
     combine_matrix[,i] <- (a+b*sum(a)/sum(b))/2
   }
@@ -79,7 +79,7 @@ combine_sample <- function(expr_data_choosed,sample_choosed,n){
 # s1 <- comp_in_ssample(expr_up,expr_down)
 s_combine1 <- combine_sample(expr_data_choosed,sample_choosed_20,10)
 #s_combine2 <- combine_sample(expr_data_choosed,sample_choosed_30,15)
-s1 <- comp_in_ssample(log10(s_combine1[1:41,]),log10(s_combine1[42:55,]))
+s1 <- comp_in_ssample(log10(s_combine1[1:73,]),log10(s_combine1[74:101,]))
 c_factor1 <- exp(sum(log(s1))/length(s1))
 # s2 <- comp_in_ssample(log10(s_combine2[1:41,]),log10(s_combine2[42:55,]))
 # c_factor2 <- exp(sum(log(s2))/length(s2))
@@ -107,7 +107,7 @@ write.csv(sample_all,"Sample_all_stomach.csv",row.names = FALSE)
 sample_all_test <- sample_all[which(!sample_all%in%sample_choosed_20$Sample.ID)]
 write.csv(sample_all_test,"Sample_all_test.csv",row.names = FALSE)
 
-s3 <- comp_in_ssample(log10(expr_all[1:41,]),log10(expr_all[42:55,]))
+s3 <- comp_in_ssample(log10(expr_all[1:73,]),log10(expr_all[74:101,]))
 s3 <- s3[order(s3)]
 s3 <- s3[which(names(s3)%in%sample_all_test)]
 write.csv(s3,"test_result101.csv")
@@ -134,7 +134,7 @@ roc_plot1 <- as.numeric(roc_plot1)
 
 roc_plot2 <- s3
 names(roc_plot2) <- NULL
-roc_plot2[roc_plot2>c_factor] <- 1
+roc_plot2[roc_plot2>c_factor1] <- 1
 roc_plot2[roc_plot2!=1] <- 0
 roc_plot <- data.frame(roc_plot1, roc_plot2)
 write.csv(roc_plot,file ="roc_test101.csv",row.names = FALSE)

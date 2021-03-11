@@ -35,7 +35,7 @@ comp_in_ssample <- function(expr_up,expr_down){
   comp_vector <- rep(0,n)
   names(comp_vector) <- names(expr_down)
   for (i in 1:n) {
-    comp_vector[i] <- sum(expr_up[,i])/sum(expr_down[,i])
+    comp_vector[i] <- mean(expr_up[,i])/mean(expr_down[,i])
     
   }
   return(comp_vector)
@@ -46,7 +46,7 @@ combine_sample <- function(expr_data_choosed,sample_choosed,n){
   combine_matrix <- expr_data_choosed[,1:n]
   names(combine_matrix) <- unique(sample_choosed$Case.ID)
   for (i in 1:n) {
-    a <- as.numeric(expr_data_choosed[,as.character(sample_choosed$Sample.ID[i])])
+    a <- as.numeric(expr_data_choosed[,as.character(sample_choosed$Sample.ID[2*i-1])])
     b <- as.numeric(expr_data_choosed[,as.character(sample_choosed$Sample.ID[2*i])])
     combine_matrix[,i] <- (a+b*sum(a)/sum(b))/2
   }
@@ -106,6 +106,8 @@ s3 <- s3[which(names(s3)%in%sample_all_test)]
 write.csv(s3,"test_result.csv")
 Positive <- s3[which(grepl("-01",names(s3)))]
 Negative <- s3[which(grepl("-11",names(s3)))]
+summary(Positive)
+summary(Negative)
 
 TP1 <- Positive[Positive>c_factor1]
 TN1 <- Negative[Negative<c_factor1]
@@ -159,3 +161,5 @@ expr_gene_all_log <- log10(subset(expr_gene_all, select = -class))
 expr_gene_all_log$class <- expr_gene_all$class
 write.csv(expr_gene_all_log,file = "expr_gene_all_log.csv",row.names = FALSE)
 
+save.image("classification.Rdata")
+load("classification.Rdata")

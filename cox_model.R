@@ -25,7 +25,11 @@ names(expr_data_log) <- gsub("\\.","-",names(expr_data_log))
 # logCPM_sample <- sample(expr_data_log)[,1:136]
 # write.csv(logCPM_sample,"logCPM_sample.csv")
 # write.table(logCPM_sample,"logCPM_sample.txt",sep = "\t" )
-dat_expr <- expr_data[,dat$submitter_id]
+dat_expr <- expr_data_log[,dat$submitter_id]
+
+hist(as.matrix(dat_expr))
+boxplot(as.matrix(dat_expr),col=rainbow(271),main="expression value",las=2)
+
 dat_expr.matrix <- cbind(dat,t(dat_expr))
 row.names(dat_expr.matrix) <- c(1:271)
 # attach(dat_expr.matrix)
@@ -137,4 +141,5 @@ ggsurvplot(kmfit1,conf.int =F, pval = T,risk.table =T, ncensor.plot = TRUE,
            ggtheme = theme_bw())
 
 detach(cox_result.matrix)
-save.image("cox.RData")
+# save.image("cox.RData")
+# load("cox.RData")

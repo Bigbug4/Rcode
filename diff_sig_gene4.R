@@ -1,22 +1,23 @@
 
 DIR=getwd()
 setwd("E:\\Rcode\\data")
+# load("limma_result.Rdata")
 
 # correlation matrix
 
 sample_list <- names(expr_mirna)[order(group_list)]
-expr_diff_protein <- CPM[result.protein$gene_id_v,]
+expr_diff_protein <- logCPM[result.protein$gene_id_v,]
 expr_diff_protein <- as.data.frame(expr_diff_protein)
 expr_diff_protein.annotation <- gene_id2name(result = expr_diff_protein)
 expr_diff_protein <- cbind(expr_diff_protein,expr_diff_protein.annotation$gene_name)
 row.names(expr_diff_protein) <- expr_diff_protein$`expr_diff_protein.annotation$gene_name`
 expr_diff_protein <- expr_diff_protein[,sample_list]
 
-expr_diff_lncrna <- CPM[result.lncrna$gene_id_v,]
+expr_diff_lncrna <- logCPM[result.lncrna$gene_id_v,]
 expr_diff_lncrna <- as.data.frame(expr_diff_lncrna)
 expr_diff_lncrna <- expr_diff_lncrna[,sample_list]
 
-expr_diff_mirna <- CPM_mirna[row.names(diff_mirna),]
+expr_diff_mirna <- logCPM_mirna[row.names(diff_mirna),]
 expr_diff_mirna <- as.data.frame(expr_diff_mirna)
 expr_diff_mirna <- expr_diff_mirna[,sample_list]
 
@@ -121,5 +122,5 @@ plot(sig_gene$score,type = "l")
 write.csv(score_list_rna,file = "key_gene_score_cpm.csv")
 write.csv(sig_gene,file = "sig_gene_mrna_v3_cpm.csv")
 
-# save.image("cor_matrix_cpm.Rdata")
+save.image("cor_matrix_cpm.Rdata")
 # load("cor_matrix.Rdata")

@@ -13,6 +13,7 @@ names(sum_expr_data) <- gsub(".","-",names(sum_expr_data),fixed = TRUE)
 # sample_normal <- case_normal$Sample.ID
 # case_choosed <- case_normal$Case.ID
 # sample_choosed <- case[case$Case.ID%in%case_choosed,]
+write.csv(sample_choosed,"sample_list.csv")
 
 sample_choosed <- read.csv("sample_list.csv")
 sample_normal <- sample_choosed[,1:20]

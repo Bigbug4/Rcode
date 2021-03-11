@@ -6,6 +6,28 @@ setwd("E:\\Rcode\\data")
 # sample choosing by clinical.
 
 clinical_all  <- read.csv("clinical.tsv",sep = "\t",header = TRUE)
+summary(clinical_all$tumor_stage)
+summary(clinical_all$gender)
+clinical_all$age=clinical_all$age_at_diagnosis/365
+length(which(clinical_all$age>80))
+length(which(clinical_all$age<40))
+length(which(clinical_all$age<60))
+length(which(clinical_all$age<80))
+
+all_sample <- read.csv("SampleID_and_Type.csv")
+all_sample_tumor <- all_sample[which(all_sample$Sample.Type=="Primary Tumor"),]
+
+case_normal <- all_sample [all_sample $Sample.Type=="Solid Tissue Normal",]
+sample_normal <- case_normal$Sample.ID
+case_choosed <- case_normal$Case.ID
+sample_choosed <- case[case$Case.ID%in%case_choosed,]
+
+
+case_choosed <- all_sample[which(all_sample$Sample.ID%in%sample_choosed$x),1]
+case_choosed <- unique(as.character(case_choosed))
+clinical_choosed <- clinical_all[which(clinical_all$submitter_id%in%case_choosed),]
+write.csv(clinical_choosed,"clinical_choosed.csv")
+summary(clinical_choosed$tumor_stage)
 
 ## make samples grouped as 
 ## not reported, stage_1, stage_1a, stage_1b, stage_2, stage_2a, stage_2b, 
@@ -46,9 +68,6 @@ write.csv(logCPM,"logCPM_all.csv")
 sig_gene_top <- read.csv("sig_gene_v3.csv",header = TRUE)
 row.names(sig_gene_top) <- sig_gene_top[,1]
 sig_gene_top <- sig_gene_top[,-1]
-
-all_sample <- read.csv("SampleID_and_Type.csv")
-all_sample_tumor <- all_sample[which(all_sample$Sample.Type=="Primary Tumor"),]
 
 sum_expr_data <- as.data.frame(CPM)
 expr_gene_top <- sum_expr_data[which(row.names(sum_expr_data)%in%sig_gene_top$gene_id_v),which(names(sum_expr_data)%in%all_sample_tumor$Sample.ID)]

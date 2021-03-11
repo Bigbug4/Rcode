@@ -46,6 +46,9 @@ pheatmap::pheatmap(expr_data_choosed[1:55, sample_list],scale = "row",cluster_co
 expr_stage_series <- read.csv("expr_stage_series_a3.csv",row.names = 1)
 pheatmap::pheatmap(expr_stage_series[1:55, ],scale = "row",cluster_cols = FALSE,fontsize_row = 8, fontsize_col = 8)
 
+expr_stage_series_a <- read.csv("expr_stage_series_a3.csv",row.names = 1)
+pheatmap::pheatmap(expr_stage_series_a[1:55, ],scale = "row",cluster_rows = FALSE,cluster_cols = FALSE,fontsize_row = 8, fontsize_col = 8)
+
 expr_stage_series_var <- read.csv("expr_stage_series_var_a3.csv",row.names = 1)
 pheatmap::pheatmap(expr_stage_series_var[1:55, ],scale = "row",cluster_rows = FALSE,cluster_cols = FALSE,fontsize_row = 8, fontsize_col = 8)
 
@@ -55,12 +58,58 @@ pheatmap::pheatmap(expr_stage_gene[1:55, ],cluster_rows = FALSE,cluster_cols = F
 signal_gene <- read.csv("signal_gene.csv",row.names = 1)
 pheatmap::pheatmap(signal_gene[1:7, ],cluster_rows = FALSE,cluster_cols = FALSE,color = colorRampPalette(c("#2075FF","white"))(50),scale = "none",fontsize_row = 8, fontsize_col = 8)
 
+#validation
+result.gse1 <- read.csv("diff_protein_gse1.csv")
+result.gse2 <- read.csv("diff_protein_gse2.csv")
+v_color <- c(Up = "red",Nosignificant = "gray",Down = "blue")
+significant1 <- ifelse(result.gse1$adj.P.Val<0.01 & abs(result.gse1$logFC)>= 1,ifelse(result.gse1$logFC > 1,'Up','Down'),'Nosignificant')
+significant2 <- ifelse(result.gse2$adj.P.Val<0.01 & abs(result.gse2$logFC)>= 1.15,ifelse(result.gse2$logFC > 1,'Up','Down'),'Nosignificant')
+
+ggplot(result.gse1, aes(result.gse1$logFC, -log10(result.gse1$adj.P.Val), col = significant1)) +
+  geom_point() +
+  scale_color_manual(values = v_color) +
+  labs(title = "Volcano map of DEmRNAs in GSE122041",x="log2 (fold change)",y="-log10 (adj.P.Value)") +
+  geom_hline(yintercept = -log10(0.01), lty=4,col="grey",lwd=0.6) +
+  geom_vline(xintercept = c(-1, 1), lty=4,col="grey",lwd=0.6) + theme(plot.title = element_text(hjust = 0.5), legend.position="right", legend.title = element_blank(),panel.grid = element_blank())
+
+ggplot(result.gse2, aes(result.gse2$logFC, -log10(result.gse2$adj.P.Val), col = significant2)) +
+  geom_point() +
+  scale_color_manual(values = v_color) +
+  labs(title = "Volcano map of DEmRNAs in GSE118916",x="log2 (fold change)",y="-log10 (adj.P.Value)") +
+  geom_hline(yintercept = -log10(0.01), lty=4,col="grey",lwd=0.6) +
+  geom_vline(xintercept = c(-1, 1), lty=4,col="grey",lwd=0.6) + theme(plot.title = element_text(hjust = 0.5), legend.position="right", legend.title = element_blank(),panel.grid = element_blank())
+
 # bar
 sig_gene <- read.csv("sig_gene_v3.csv")
 barplot(sig_gene$score[order(sig_gene$score,decreasing = TRUE)]-1,names.arg = sig_gene$geneName,
         horiz=TRUE, xlim = c(0,1),las=1,border="white",col = '#ff8800',xlab='SCORE - 1',cex.names=0.8)
 
 grid(ny = NA)
+
+# score
+s <- read.csv("sig_gene_mrna_v3.csv")
+attach(s)
+plot(score-1)
+
+s$x <- 1:170
+ggplot(data = s) + geom_line(aes(x,score-1),colour = "#2E9FDF",size = 0.5) +   
+  theme(plot.title = element_text(size = 15)) +
+  geom_hline(aes(yintercept=0.2135),colour="#FF0000", size = 0.5, linetype="dashed") +
+  geom_vline(aes(xintercept=55), colour="#FF0000", size = 0.5, linetype="dashed") +
+  theme_minimal()
+
+barplot(score-1,names.arg = GeneName,
+      ylim = c(0,1),las=1,border="white",col = '#ff8800',ylab='SCORE - 1',cex.names=0.8)
+  
+grid(nx=3,ny = 5)
+
+s$c <- '#cccccc'
+s$c[1:55] <- '#ff8800'
+
+barplot(score-1,names.arg = GeneName,
+        ylim = c(0,1),las=1,border="white",col = as.character(factor(s$c)),ylab='SCORE - 1',cex.names=0.8)
+
+grid(nx=3,ny = 5)
 
 # ROC
 p <- read.csv("roc_test.csv")
@@ -125,5 +174,44 @@ p2 <- geom_line(aes(x2,y2,colour = "#F00"),size = 0.5,linetype=1)
 p3 <- geom_line(aes(x3,y3,colour = "#00F"),size = 0.5,linetype=1) 
 
 p1+p2+p3
+
+# power law distibution
+node <- read.csv("net2 default node.csv")
+degree<-node$Degree
+t<-table(degree)
+x<-as.numeric(names(t))
+y<-as.numeric(t)
+
+fit <- lowess(x,y)
+f<-function(x1,a,b){a*x1^b}
+fit1<-nls(y~f(x,a,b),start=list(a=1,b=2))
+summary(fit1)
+x1<-seq(1,8,by=1)
+y1<-18.9892*x1^-1.1517
+
+plot(t,type='p')
+lines(y1)
+
+plot(t,type='p')
+lines(fit)
+
+library(basicTrendline)
+trendline(x, y, model="power2P", ePos.x = "topleft", summary=TRUE,eDigit = 3, eSize = 1.4, text.col = "blue",CI.color = NA)
+
+p4 <- ggplot() + geom_point(aes(x,y,colour = "#0F0"),size = 4) + 
+  xlab("All nodes degree") + xlim(1,8)+ 
+  ylab("Numbers of nodes") + ylim(0,20)+
+  theme(plot.title = element_text(size = 15)) + theme_minimal()
+
+p5 <- geom_line(aes(fit$x,fit$y,colour = "#F00"),size = 1,linetype=1)
+p6 <- geom_line(aes(x1,y1,colour = "#F00"),size = 1,linetype=1)
+p7 <- geom_line(aes(x,fitted(fit1),colour = "#F00"),size = 1,linetype=1)
+
+p4+p5
+p4+p6
+p4+p7
+
+write.csv(t,"degree.csv")
+
 save.image("visualization.RData")
-# load("visualization.RData")
+load("visualization.RData")

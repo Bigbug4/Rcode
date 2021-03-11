@@ -55,7 +55,7 @@ summary(kmfit1)
 plot(kmfit1,col =rainbow(2),main='Overall Survival GPX3 ',xlab='Days',ylab='Percent Survival')
 legend("topright", legend=c(levels(GPX3_group)), col=rainbow(2), lwd=2)
 
-ggsurvplot(kmfit1,conf.int =F, pval = T,fun = "event",
+ggsurvplot(kmfit1,conf.int =F, pval = T,
            ggtheme = theme_bw())
 ggsurvplot(kmfit1,conf.int =F, pval = T,risk.table =T, ncensor.plot = TRUE, fun = "event",
            ggtheme = theme_bw())
@@ -77,3 +77,4 @@ pvalue <- 1 - pchisq(diff$chisq, length(data.survdiff$n) - 1)
 
 detach(dat_expr)
 save.image("Surv.RData")
+load("Surv.RData")

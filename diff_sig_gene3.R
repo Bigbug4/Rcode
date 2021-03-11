@@ -70,16 +70,18 @@ names(node_info) <- diff_protein$gene_name
 
 estimate_score <- function(cor_mat,score_list,pvalue){
   for(gene in 1:dim(cor_mat$cormatrix)[2]){
-    gene_cor_vector <- abs(cor_mat$cormatrix[-which(cor_mat$pvalue_matrix>pvalue),gene])
+    #gene_cor_vector <- abs(cor_mat$cormatrix[-which(cor_mat$pvalue_matrix>pvalue),gene])
+    gene_cor_vector <- abs(cor_mat$cormatrix[,gene])
+    tmp=which(cor_mat$pvalue_matrix[,gene]>0.05)
+    gene_cor_vector[tmp]=0
     gene_cor_vector <- gene_cor_vector/sum(gene_cor_vector)
+    gene_cor_vector=gene_cor_vector[which(gene_cor_vector>0)]
     #score_list[gene] <- -log10(1-sum(-gene_cor_vector*log(gene_cor_vector))/log(length(gene_cor_vector)))
     score_list[gene] <- sum(-gene_cor_vector*log(gene_cor_vector))
     
   }
   return(score_list)
 }
-
-
 
 keygenes_find <- function(node_info,m1,m2,pvalue=0.05){
   gene_counts <- length(node_info)
@@ -166,4 +168,4 @@ sig_gene_v3 <- cbind(sig_gene_v3,zz)
 write.csv(sig_gene_v3,file = "sig_gene_v3.csv",row.names = FALSE)
 
 #save.image("cor_matrix.Rdata")
-# load("cor_matrix.Rdata")
+load("cor_matrix.Rdata")
